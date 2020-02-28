@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Content, Footer, Form, Panel, ButtonToolbar, Button } from 'rsuite';
+import { Container, Content, Footer, Form, Panel, ButtonToolbar, Button, Message } from 'rsuite';
 import Centerbox from '../../shared/components/UIElements/Centerbox';
 import TextField from '../../shared/components/Form/Textfield';
 import model from '../components/AuthSchema';
@@ -16,57 +16,66 @@ class Login extends React.Component {
                 email: '',
                 password: ''
             },
-            formError: {}
+            formError: {
+                email: "This field is required.",
+                password: "This field is required."
+            },
+            serverError: '',
+            errorMessage: []
         };
-    }
-
-    componentDidMount() {
-
     }
 
 
     handleSubmit = async () => {
-        const { dispatch } = this.context;
-        console.log(dispatch);
-        await dispatch({
-            type: "LOGIN",
-            payload: {
-                isAuthenticated: true,
-                user: 1,
-                token: 123
-            }
-        });
-        const { state } = this.context;
-        console.log(state);
-        /*
-        const { formValue } = this.state;
-        if (!this.form.check()) {
-            console.error('Form Error');
-            return;
+        try {
+            fetch(process.env.REACT_APP_BACKEND_URL + '/users/login', {
+                method: 'post',
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: this.state.formValue.email,
+                    password: this.state.formValue.password
+                })
+            })
+                .then(async (response) => {
+                    let responseData = await response.json();
+                    if (response.ok) {
+                        return responseData;
+                    } else {
+                        this.setState({
+                            ...this.state,
+                            serverError: responseData.message
+                        });
+                        return false;
+                    }
+                })
+                .then(async (data) => {
+                    if (data) {
+                        console.log(data);
+                        const { login } = this.context;
+                        login(data.userId, data.token);
+                    }
+                })
+                .catch(function (error) { });
+
+        } catch (err) {
+            throw new Error(err.message);
         }
-        console.log(formValue, 'Form Value');
-        */
+
     }
 
-    handleCheckEmail = () => {
-        this.form.checkForField('email', checkResult => {
-            console.log(checkResult);
-        });
-        const { dispatch } = this.context;
-        dispatch({
-            type: "LOGOUT"
-        });
-    }
 
     render() {
         const { formError, formValue } = this.state;
-
+        let serverErr = <Message key='1' type="error" description={this.state.serverError} />;
         return (
             <div>
 
                 <Container>
                     <Content>
                         <Centerbox>
+                            {this.state.serverError ? serverErr : null}
                             <Panel header={<h3>Login</h3>} bordered>
                                 <Form fluid
                                     ref={ref => (this.form = ref)}
@@ -82,17 +91,14 @@ class Login extends React.Component {
                                     <TextField name="email" label="Email" />
                                     <TextField name="password" label="Password" type="password" />
 
-
                                     <ButtonToolbar>
-                                        <Button appearance="primary" onClick={this.handleSubmit}>Submit</Button>
-
-                                        <Button onClick={this.handleCheckEmail}>Check Email</Button>
+                                        <Button disabled={Object.keys(formError).length !== 0} appearance="primary" onClick={this.handleSubmit}>Login</Button>
                                     </ButtonToolbar>
                                 </Form>
                             </Panel>
                         </Centerbox>
                     </Content>
-                    <Footer>Footer</Footer>
+                    <Footer></Footer>
                 </Container>
 
             </div>

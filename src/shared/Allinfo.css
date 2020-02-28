@@ -1,0 +1,35 @@
+.custom-timeline {
+    margin-left: 20px;
+  }
+  
+  .custom-timeline .rs-timeline-item-custom-dot .rs-icon {
+    position: absolute;
+    background: #fff;
+    top: 0;
+    left: -2px;
+    border: 2px solid #ddd;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 18px;
+    padding-top: 9px;
+    color: #999;
+    margin-left: -13px;
+  }
+  
+  .custom-timeline .rs-timeline-item-content {
+    margin-left: 24px;
+  }
+  .rs-timeline-item:not(:last-child) .rs-timeline-item-content {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    border-bottom: 1px dashed #a6a6a6;
+}
+.statBox{
+  padding: .5rem;
+  border-radius: 5px;
+  background-color: #37a6c0;
+  color: white; 
+  text-align: center;
+  font-size: bold;
+}

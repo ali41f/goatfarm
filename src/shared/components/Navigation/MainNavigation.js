@@ -4,6 +4,7 @@ import NavLinks from './NavLinks';
 import { Navbar, Sidenav } from 'rsuite';
 import { slide as SidebarMenu } from 'react-burger-menu';
 
+
 const styles = {
     width: '100%',
     display: 'inline-table',
@@ -11,11 +12,17 @@ const styles = {
 };
 
 const SidenavInstance = ({ onSelect, activeKey, ...props }) => {
+
+    const menuCloseHandler = () => {
+        let element = document.getElementsByClassName("bm-overlay")[0];
+        element.click();
+    }
+
     return (
         <div style={styles}>
             <Sidenav {...props}>
                 <Sidenav.Body>
-                    <NavLinks activeKey={activeKey} />
+                    <NavLinks closeMenu={menuCloseHandler} activeKey={activeKey} />
                 </Sidenav.Body>
             </Sidenav>
         </div>
@@ -23,29 +30,29 @@ const SidenavInstance = ({ onSelect, activeKey, ...props }) => {
 };
 
 
-
 const NavBarInstance = ({ onSelect, activeKey, ...props }) => {
-    //console.log(activeKey);
+    const menuCloseHandler = () => { }
     return (
         <Navbar {...props}>
             <Navbar.Body>
-                <NavLinks activeKey={activeKey} />
+                <NavLinks activeKey={activeKey} closeMenu={menuCloseHandler} />
             </Navbar.Body>
         </Navbar>
     );
 };
 
 
-
 const MainNavigation = props => {
 
     const [activeKey, setActiveKey] = useState(1);
 
+
     const handleSelect = (eventKey) => {
-        this.setActiveKey({
+        setActiveKey({
             activeKey: eventKey
         });
     }
+
 
     return (
         <React.Fragment>
@@ -59,6 +66,8 @@ const MainNavigation = props => {
             <div className="nav-wrapper">
                 <NavBarInstance className="desktopMenu" appearance="default" activeKey={activeKey} onSelect={handleSelect} />
             </div>
+
+
         </React.Fragment>
     );
 }
